@@ -1,0 +1,4 @@
+include README.md
+recursive-include octoprint_LCD1602/templates *
+recursive-include octoprint_LCD1602/translations *
+recursive-include octoprint_LCD1602/static *
