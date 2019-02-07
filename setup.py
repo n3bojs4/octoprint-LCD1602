@@ -2,6 +2,8 @@
 """
   LCD1602 Plugin for Octoprint installation script.
 """
+from setuptools import setup
+
 #####################################################################################
 ### Do not forget to adjust the following variables to your own plugin.
 
@@ -71,8 +73,6 @@ plugin_ignored_packages = []
 additional_setup_parameters = {}
 
 #####################################################################################
-
-from setuptools import setup
 
 try:
     import octoprint_setuptools
