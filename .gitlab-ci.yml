@@ -7,5 +7,5 @@ before_script:
 
 Linter:
   stage: test
-  script: pylint *
+  script: pylint *.py
 
