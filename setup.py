@@ -9,56 +9,57 @@ plugin_identifier = "LCD1602"
 # The plugin's python package, should be "octoprint_<plugin identifier>", has to be unique
 plugin_package = "octoprint_LCD1602"
 
-# The plugin's human readable name. Can be overwritten within OctoPrint's internal 
+# The plugin's human readable name. Can be overwritten within OctoPrint's internal
 # data via __plugin_name__ in the plugin module
 plugin_name = "OctoPrint-Lcd1602"
 
-# The plugin's version. Can be overwritten within OctoPrint's internal 
+# The plugin's version. Can be overwritten within OctoPrint's internal
 # data via __plugin_version__ in the plugin module
 plugin_version = "0.1.0"
 
-# The plugin's description. Can be overwritten within OctoPrint's internal data via 
+# The plugin's description. Can be overwritten within OctoPrint's internal data via
 # __plugin_description__ in the plugin module
-plugin_description = """Octoprint plugin to display informations on a LCD1602 connected through I2C."""
+plugin_description = """Octoprint plugin to display informations on a LCD1602 connected via I2C."""
 
-# The plugin's author. Can be overwritten within OctoPrint's internal data via 
+# The plugin's author. Can be overwritten within OctoPrint's internal data via
 # __plugin_author__ in the plugin module
 plugin_author = "Milan Popovic"
 
 # The plugin's author's mail address.
 plugin_author_email = "n3bojs4@gmail.com"
 
-# The plugin's homepage URL. Can be overwritten within OctoPrint's internal data 
+# The plugin's homepage URL. Can be overwritten within OctoPrint's internal data
 # via __plugin_url__ in the plugin module
 plugin_url = "https://github.com/n3bojs4/OctoPrint-Lcd1602"
 
-# The plugin's license. Can be overwritten within OctoPrint's internal data 
+# The plugin's license. Can be overwritten within OctoPrint's internal data
 # via __plugin_license__ in the plugin module
 plugin_license = "AGPLv3"
 
 # Any additional requirements besides OctoPrint should be listed here
 plugin_requires = ["RPLCD"]
 
-### -------------------------------------------------------------------------------------------------------
+### ------------------------------------------------------------------------------------------------
 ### More advanced options that you usually shouldn't have to touch follow after this point
-### -------------------------------------------------------------------------------------------------------
+### ------------------------------------------------------------------------------------------------
 
-# Additional package data to install for this plugin. The subfolders "templates", "static" and 
-# "translations" will already be installed automatically if they exist. Note that if you add something 
-# here you'll also need to update MANIFEST.in to match to ensure that python setup.py sdist produces a 
-# source distribution that contains all your files. This is sadly due to how python's setup.py 
-# works, see also http://stackoverflow.com/a/14159430/2028598
+# Additional package data to install for this plugin. The subfolders "templates", "static" and
+# "translations" will already be installed automatically if they exist. Note that if you add
+# something here you'll also need to update MANIFEST.in to match to ensure that python setup.py
+# sdist produces a source distribution that contains all your files. This is sadly due to how
+# python's setup.py works, see also http://stackoverflow.com/a/14159430/2028598
 plugin_additional_data = []
 
-# Any additional python packages you need to install with your plugin that are not contained in <plugin_package>.*
+# Any additional python packages you need to install with your plugin that are not
+# contained in <plugin_package>.*
 plugin_additional_packages = []
 
 # Any python packages within <plugin_package>.* you do NOT want to install with your plugin
 plugin_ignored_packages = []
 
-# Additional parameters for the call to setuptools.setup. If your plugin wants to register 
+# Additional parameters for the call to setuptools.setup. If your plugin wants to register
 # additional entry points, define dependency links or other things like that, this is the place to
-# go. Will be merged recursively with the default setup parameters as provided by 
+# go. Will be merged recursively with the default setup parameters as provided by
 # octoprint_setuptools.create_plugin_setup_parameters using octoprint.util.dict_merge.
 #
 # Example:
@@ -71,12 +72,12 @@ additional_setup_parameters = {}
 from setuptools import setup
 
 try:
-	import octoprint_setuptools
+  import octoprint_setuptools
 except:
-	print("Could not import OctoPrint's setuptools, are you sure you are running that under "
-	      "the same python installation that OctoPrint is installed under?")
-	import sys
-	sys.exit(-1)
+  print("Could not import OctoPrint's setuptools, are you sure you are running that under "
+	  "the same python installation that OctoPrint is installed under?")
+  import sys
+  sys.exit(-1)
 
 setup_parameters = octoprint_setuptools.create_plugin_setup_parameters(
 	identifier=plugin_identifier,
