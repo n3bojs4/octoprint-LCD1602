@@ -1,6 +1,9 @@
 stages:
   - test
 
+before_script:
+  - pip install pylint
+
 
 Linter:
   stage: test
