@@ -20,4 +20,4 @@ Octoprint Install:
 Octoprint install and test:
   stage: run
   image: octoprint/octoprint:1.3.10rc2
-  script: source /opt/octoprint/venv/bin/activate && python setup.py install && /opt/octoprint/venv/bin/octoprint serve
+  script: bash octoprint_LCD1602/tests/running_test.sh
