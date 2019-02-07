@@ -14,4 +14,4 @@ Linter:
 Octoprint Install:
   stage: build
   image: octoprint/octoprint:1.3.10rc2
-  script: source /opt/octoprint/venv/bin/activate && python setup.py Install
+  script: source /opt/octoprint/venv/bin/activate && python setup.py install
