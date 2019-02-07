@@ -6,5 +6,5 @@ stages:
 
 Linter:
   stage: test
-  script: pylint --output-format=parseable *.py
+  script: pylint --disable=invalid-name --output-format=parseable *.py
 

@@ -1,5 +1,7 @@
 # coding=utf-8
-
+"""
+  LCD1602 Plugin for Octoprint installation script.
+"""
 #####################################################################################
 ### Do not forget to adjust the following variables to your own plugin.
 
