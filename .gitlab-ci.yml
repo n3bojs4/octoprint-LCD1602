@@ -1,0 +1,8 @@
+stages:
+  - test
+
+
+Linter:
+  stage: test
+  script: pylint *
+
