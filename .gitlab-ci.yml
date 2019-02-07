@@ -5,7 +5,8 @@ image: milanpopovic/pylinter:2.7.13
 stages:
   - test
 
-before_script: pip install octoprint_setuptools
+before_script: 
+  - pip install octoprint_setuptools
 
 
 Linter:
