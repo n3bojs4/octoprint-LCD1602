@@ -5,6 +5,7 @@ image: milanpopovic/pylinter:2.7.13
 stages:
   - test
   - build
+  - run
 
 
 Linter:
@@ -15,3 +16,8 @@ Octoprint Install:
   stage: build
   image: octoprint/octoprint:1.3.10rc2
   script: source /opt/octoprint/venv/bin/activate && python setup.py install
+
+Octoprint install and test:
+  stage: run
+  image: octoprint/octoprint:1.3.10rc2
+  script: source /opt/octoprint/venv/bin/activate && python setup.py install && /opt/octoprint/venv/bin/octoprint serve
