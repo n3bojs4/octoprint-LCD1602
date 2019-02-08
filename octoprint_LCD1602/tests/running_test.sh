@@ -22,7 +22,7 @@ fi
 
 echo "Looking for errors on logs"
 sleep 10
-ERRORS=$(grep -i -c error /tmp/logs )
+ERRORS=$(grep -c "^| \!LCD1602 I2c display" /tmp/logs )
 
 if [ $ERRORS -gt 0 ]
 then
