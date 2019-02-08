@@ -11,6 +11,7 @@ import octoprint.events
 from RPLCD.i2c import CharLCD
 import time
 import datetime
+import os
 
 
 class LCD1602Plugin(octoprint.plugin.StartupPlugin,
@@ -18,7 +19,10 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
                     octoprint.plugin.ProgressPlugin):
 
   def __init__(self):
-    self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
+    if (os.getenv('LCD1602_DOCKER')):
+      print('We are running in test environnement, no i2c device attached.')
+    else:
+      self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
 
     # init vars
     self.start_date = 0
