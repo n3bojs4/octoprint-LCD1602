@@ -19,7 +19,6 @@ Octoprint Install:
 
 Octoprint install and test:
   stage: run
-  image: milanpopovic/octoprint:1.3.10rc2
-  before_script:
-    - mknod /dev/i2c-1 c 1 3
+  #image: milanpopovic/octoprint:1.3.10rc2
+  image: octoprint/octoprint:1.3.10rc2
   script: bash octoprint_LCD1602/tests/running_test.sh
