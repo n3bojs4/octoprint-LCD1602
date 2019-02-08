@@ -12,6 +12,8 @@ from RPLCD.i2c import CharLCD
 import time
 import datetime
 import os
+import sys
+import fake_rpi
 
 
 class LCD1602Plugin(octoprint.plugin.StartupPlugin,
@@ -21,6 +23,7 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
   def __init__(self):
     if (os.getenv('LCD1602_DOCKER')):
       print('We are running in test environnement, no i2c device attached.')
+      self.mylcd = Mock_smbusModule()
     else:
       self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
 
