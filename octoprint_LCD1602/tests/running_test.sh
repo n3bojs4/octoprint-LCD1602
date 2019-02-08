@@ -1,5 +1,7 @@
 #!/bin/bash
 
+if [ $(cat /proc/1/cgroup | grep -c -i docker) -gt 0 ] ; then export LCD1602_DOCKER=1; fi
+
 source /opt/octoprint/venv/bin/activate 
 python setup.py install || echo "Error: Cannot install LCD1602 Plugin"
 
@@ -20,7 +22,7 @@ fi
 
 echo "Looking for errors on logs"
 sleep 10
-ERRORS=$(grep -i -c error /tmp/logs )
+ERRORS=$(grep -c "^| \!LCD1602 I2c display" /tmp/logs )
 
 if [ $ERRORS -gt 0 ]
 then

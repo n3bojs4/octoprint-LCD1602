@@ -11,6 +11,10 @@ import octoprint.events
 from RPLCD.i2c import CharLCD
 import time
 import datetime
+import os
+import sys
+from fake_rpi import printf
+import fake_rpi
 
 
 class LCD1602Plugin(octoprint.plugin.StartupPlugin,
@@ -18,15 +22,26 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
                     octoprint.plugin.ProgressPlugin):
 
   def __init__(self):
-    self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
-
+    if (os.getenv('LCD1602_DOCKER')):
+      print('We are running in test environnement, no i2c device attached.')
+      try:
+        print('Loading fake_rpi instead of smbus2')
+        sys.modules['smbus2'] = fake_rpi.smbus
+        self.mylcd = fake_rpi.smbus.SMBus(1)
+      except:
+        print('Cannot load fake_rpi !')
+    else:
+      self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
+      # create block for progress bar
+      self.mylcd.create_char(1,self.block)
+    
     # init vars
     self.start_date = 0
     self.block = bytearray(b'\xFF\xFF\xFF\xFF\xFF\xFF\xFF')
     self.block.append(255)
 
     # create block for progress bar
-    self.mylcd.create_char(1,self.block)
+    #self.mylcd.create_char(1,self.block)
 
   def JobIsDone(self,lcd):
 
