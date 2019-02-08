@@ -24,6 +24,8 @@ ERRORS=$(grep -i -c error /tmp/logs )
 
 if [ $ERRORS -gt 0 ]
 then
+  echo 'Plugin errors detected, check logs below :'
+  grep -A 100 -B 20 'LCD1602' /tmp/logs
   exit 1
 else
   echo "Plugin is installed and loaded"
