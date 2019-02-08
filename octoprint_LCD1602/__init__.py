@@ -25,6 +25,7 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
     if (os.getenv('LCD1602_DOCKER')):
       print('We are running in test environnement, no i2c device attached.')
       try:
+        print('Loading fake_rpi instead of smbus2')
         sys.modules['smbus2'] = fake_rpi.smbus
       except:
         print('Cannot load fake_rpi !')
