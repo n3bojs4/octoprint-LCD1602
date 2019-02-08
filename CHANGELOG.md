@@ -6,6 +6,9 @@
 - add settings in octoprint web interface
 - support more devices (oled ?)
 
+## 0.1.1 Bugs corrections
+- fix dependencies errors (RPLCD needs smbus2)
+- Add gitlab pipeline for avoiding stupid dependencies errors (using fake_rpi)
 
 ## 0.1 Initial Release
 
