@@ -21,7 +21,7 @@ clone the repo :
 
 install :
 
-`cd OctoPrint-Lcd1602 && python setup install`
+`cd OctoPrint-Lcd1602 && python setup.py install`
 
 ## Configuration
 
