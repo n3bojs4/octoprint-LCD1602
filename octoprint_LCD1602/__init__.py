@@ -27,10 +27,11 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
       try:
         print('Loading fake_rpi instead of smbus2')
         sys.modules['smbus2'] = fake_rpi.smbus
+        self.mylcd = CharLCD(smbus.SMBus(1))
       except:
         print('Cannot load fake_rpi !')
-    
-    self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
+    else:
+      self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
     
     # init vars
     self.start_date = 0
