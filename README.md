@@ -17,11 +17,11 @@ or manually using this URL:
 
 clone the repo :
 
-`git clone https://github.com/n3bojs4/OctoPrint-Lcd1602/archive/master.zip  `
+`git clone https://github.com/n3bojs4/OctoPrint-Lcd1602.git  `
 
 install :
 
-`cd OctoPrint-Lcd1602 && python setup install`
+`cd OctoPrint-Lcd1602 && python setup.py install`
 
 ## Configuration
 
