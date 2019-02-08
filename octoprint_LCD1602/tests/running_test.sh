@@ -4,7 +4,7 @@ source /opt/octoprint/venv/bin/activate
 python setup.py install || echo "Error: Cannot install LCD1602 Plugin"
 
 echo "Starting octoprint server"
-/opt/octoprint/venv/bin/octoprint serve >/tmp/logs &
+/opt/octoprint/venv/bin/octoprint serve --iknowwhatimdoing >/tmp/logs &
 
 echo "Checking octoprint is running"
 sleep 3
