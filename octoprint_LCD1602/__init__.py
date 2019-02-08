@@ -31,7 +31,6 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
       except:
         print('Cannot load fake_rpi !')
     else:
-      print('on est la')
       self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
       
       # create block for progress bar
