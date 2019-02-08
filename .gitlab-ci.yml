@@ -20,4 +20,4 @@ Octoprint Install:
 Octoprint install and test:
   stage: run
   image: milanpopovic/octoprint:1.3.10rc2
-  script: bash octoprint_LCD1602/tests/running_test.sh
+  script: su -c "bash octoprint_LCD1602/tests/running_test.sh" octoprint
