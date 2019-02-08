@@ -13,6 +13,7 @@ import time
 import datetime
 import os
 import sys
+from fake_rpi import printf
 import fake_rpi
 
 
@@ -29,6 +30,8 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
         print('Cannot load fake_rpi !')
     else:
       self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
+    
+    @printf
 
     # init vars
     self.start_date = 0
