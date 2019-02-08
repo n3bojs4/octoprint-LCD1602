@@ -23,7 +23,10 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
   def __init__(self):
     if (os.getenv('LCD1602_DOCKER')):
       print('We are running in test environnement, no i2c device attached.')
-      sys.modules['smbus2'] = fake_rpi.smbus
+      try:
+        sys.modules['smbus2'] = fake_rpi.smbus
+      except:
+        print('Cannot load fake_rpi !')
     else:
       self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
 
