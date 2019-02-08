@@ -1,0 +1,11 @@
+vscode.code-workspace
+*.pyc
+*.swp
+.idea
+*.iml
+build
+dist
+*.egg*
+.DS_Store
+*.zip
+*.old
