@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#export LCD1602_DOCKER=1
+if [ $(cat /proc/1/cgroup | grep -c -i docker) -gt 0 ] ; then export LCD1602_DOCKER=1; fi
 
 source /opt/octoprint/venv/bin/activate 
 python setup.py install || echo "Error: Cannot install LCD1602 Plugin"
