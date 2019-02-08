@@ -27,7 +27,7 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
       try:
         print('Loading fake_rpi instead of smbus2')
         sys.modules['smbus2'] = fake_rpi.smbus
-        self.mylcd = smbus.SMBus(1)
+        self.mylcd = fake_rpi.smbus.SMBus(1)
       except:
         print('Cannot load fake_rpi !')
     else:
