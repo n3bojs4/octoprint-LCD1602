@@ -31,8 +31,6 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
     else:
       self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
     
-    @printf
-
     # init vars
     self.start_date = 0
     self.block = bytearray(b'\xFF\xFF\xFF\xFF\xFF\xFF\xFF')
