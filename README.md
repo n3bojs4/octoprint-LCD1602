@@ -19,7 +19,7 @@ LCD1602 Plugin for Octoprint
 Install via the bundled [Plugin Manager](https://github.com/foosel/OctoPrint/wiki/Plugin:-Plugin-Manager)
 or manually using this URL:
 
-    https://github.com/n3bojs4/OctoPrint-Lcd1602/archive/master.zip
+    https://github.com/GrooveServer/octoprint-LCD1602/archive/refs/heads/master.zip
 
 **MANUAL INSTALL:** 
 
