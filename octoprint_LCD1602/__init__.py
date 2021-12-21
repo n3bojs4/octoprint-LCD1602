@@ -2,6 +2,14 @@
 
 """
   LCD1602 Plugin for Octoprint
+  Written by: n3bojs4
+  https://github.com/n3bojs4/octoprint-LCD1602
+
+  Forked on 2021-12-17 by GrooveServer
+
+  Notes: This plugin as written did not support Python 3 (Current default in OctoPrint)
+  Modified to support Python 3, removed refrences to fakePi that were causing the plugin to fail to load.
+
 """
 
 from __future__ import absolute_import
@@ -13,33 +21,22 @@ import time
 import datetime
 import os
 import sys
-from fake_rpi import printf
-import fake_rpi
 
+__plugin_pythoncompat__ = ">=2.7,<4"
 
 class LCD1602Plugin(octoprint.plugin.StartupPlugin,
                     octoprint.plugin.EventHandlerPlugin,
                     octoprint.plugin.ProgressPlugin):
 
   def __init__(self):
-    if (os.getenv('LCD1602_DOCKER')):
-      print('We are running in test environnement, no i2c device attached.')
-      try:
-        print('Loading fake_rpi instead of smbus2')
-        sys.modules['smbus2'] = fake_rpi.smbus
-        self.mylcd = fake_rpi.smbus.SMBus(1)
-      except:
-        print('Cannot load fake_rpi !')
-    else:
       self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
       
       # create block for progress bar
       self.block = bytearray(b'\xFF\xFF\xFF\xFF\xFF\xFF\xFF')
       self.block.append(255)
       self.mylcd.create_char(1,self.block)
-    
-    # init vars
-    self.start_date = 0
+      # init vars
+      self.start_date = 0
 
     # create block for progress bar
     #self.mylcd.create_char(1,self.block)
@@ -160,10 +157,10 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
 __plugin_name__ = "LCD1602 I2c display"
 
 def __plugin_load__():
-	global __plugin_implementation__
-	__plugin_implementation__ = LCD1602Plugin()
+  global __plugin_implementation__
+  __plugin_implementation__ = LCD1602Plugin()
 
-	global __plugin_hooks__
-	__plugin_hooks__ = {
-		"octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
-	}
+  global __plugin_hooks__
+  __plugin_hooks__ = {
+    "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
+  }

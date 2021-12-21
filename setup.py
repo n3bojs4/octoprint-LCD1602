@@ -1,6 +1,16 @@
 # coding=utf-8
 """
   LCD1602 Plugin for Octoprint installation script.
+
+  LCD1602 Plugin for Octoprint
+  Written by: n3bojs4
+  https://github.com/n3bojs4/octoprint-LCD1602
+
+  Forked on 2021-12-17 by GrooveServer
+
+  Notes: This plugin as written did not support Python 3 (Current default in OctoPrint)
+  Modified to support Python 3, removed refrences to fakePi that were causing the plugin to fail to load.
+
 """
 from setuptools import setup
 
@@ -41,7 +51,7 @@ plugin_url = "https://github.com/n3bojs4/OctoPrint-Lcd1602"
 plugin_license = "AGPLv3"
 
 # Any additional requirements besides OctoPrint should be listed here
-plugin_requires = ["RPLCD", "smbus2", "fake-rpi", "Pygments"]
+plugin_requires = ["RPLCD", "smbus2", "Pygments"]
 
 ### ------------------------------------------------------------------------------------------------
 ### More advanced options that you usually shouldn't have to touch follow after this point
