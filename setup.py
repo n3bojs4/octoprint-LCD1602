@@ -29,7 +29,7 @@ plugin_name = "OctoPrint-Lcd1602"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal
 # data via __plugin_version__ in the plugin module
-plugin_version = "0.1.0"
+plugin_version = "0.2.0"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via
 # __plugin_description__ in the plugin module
@@ -51,7 +51,9 @@ plugin_url = "https://github.com/n3bojs4/OctoPrint-Lcd1602"
 plugin_license = "AGPLv3"
 
 # Any additional requirements besides OctoPrint should be listed here
-plugin_requires = ["RPLCD", "smbus2", "Pygments"]
+plugin_requires = ["RPLCD >=1.3.0<2.0.0",
+                   "smbus2 >=0.4.1<0.5.0",
+                   "Pygments >=2.10.0<3.0.0"]
 
 ### ------------------------------------------------------------------------------------------------
 ### More advanced options that you usually shouldn't have to touch follow after this point
