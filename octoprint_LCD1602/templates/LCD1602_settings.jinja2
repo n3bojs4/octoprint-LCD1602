@@ -1,0 +1,11 @@
+<form id="settings_LCD1602" class="form-horizontal" >
+    <h3>LCD1602 <small>{{ _('Version') }}: <span data-bind="text: settingsViewModel.settings.plugins.LCD1602.installedVersion"></span></small></h3>
+    <div class="control-group">
+        <div class="controls">
+            <label class="checkbox">
+                <input type="checkbox" data-bind="checked: settingsViewModel.settings.plugins.LCD1602.showLayerInformationIfAvailable">Show Layer information if <a href="https://plugins.octoprint.org/plugins/DisplayLayerProgress/">DisplayLayerProgress</a> is installed
+            </label>
+            <span class="help-inline">Hint: The remaining time will be replaced by the layer information in the second row of the display.</span>
+        </div>
+    </div>
+</form>

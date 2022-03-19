@@ -13,6 +13,8 @@
 """
 
 from __future__ import absolute_import
+
+import threading
 from octoprint.printer.estimation import PrintTimeEstimator
 import octoprint.plugin
 import octoprint.events
@@ -26,73 +28,126 @@ __plugin_pythoncompat__ = ">=2.7,<4"
 
 class LCD1602Plugin(octoprint.plugin.StartupPlugin,
                     octoprint.plugin.EventHandlerPlugin,
-                    octoprint.plugin.ProgressPlugin):
+                    octoprint.plugin.ProgressPlugin,
+                    octoprint.plugin.SettingsPlugin,
+                    octoprint.plugin.TemplatePlugin,
+                    octoprint.plugin.AssetPlugin
+                    ):
 
   def __init__(self):
-      self.mylcd = CharLCD(i2c_expander='PCF8574', address=0x27, cols=16, rows=2, backlight_enabled=True, charmap='A00')
-      
-      # create block for progress bar
-      self.block = bytearray(b'\xFF\xFF\xFF\xFF\xFF\xFF\xFF')
-      self.block.append(255)
-      self.mylcd.create_char(1,self.block)
+      self.mylcd = None
+      self.block = None
+
       # init vars
       self.start_date = 0
+      # Creating lock for threads
+      self.lock = threading.Lock()
+      self.displayLine1 = None
+      self.displayLine2 = None
+      self.currentLayerInformation = None
 
-    # create block for progress bar
-    #self.mylcd.create_char(1,self.block)
+  def initialize(self):
+    try:
+        self.mylcd = CharLCD(i2c_expander='PCF8574',
+                             address=0x27,
+                             cols=16, rows=2,
+                             backlight_enabled=True,
+                             charmap='A00')
+        # create block for progress bar
+        self.block = bytearray(b'\xFF\xFF\xFF\xFF\xFF\xFF\xFF')
+        self.block.append(255)
+        self.mylcd.create_char(1, self.block)
+    except Exception as e:
+        self._logger.exception("Exception during initialisation of the LCD-Driver")
 
-  def JobIsDone(self,lcd):
+  def jobIsDone(self):
 
     # create final anim
     self.birdy = [ '^_-' , '^_^', '-_^' , '^_^', '0_0', '-_-', '^_-', '^_^','@_@','*_*','$_$','<_<','>_>']
 
     for pos in range(0,13):
-      lcd.cursor_pos = (1,pos)
-      lcd.write_string(self.birdy[pos])
+      self.lcd.cursor_pos = (1,pos)
+      self.lcd.write_string(self.birdy[pos])
       time.sleep(0.5)
-      lcd.clear()
-    lcd.write_string('Job is Done    \,,/(^_^)\,,/')
+      self.lcd.clear()
+    self.lcd.write_string('Job is Done    \,,/(^_^)\,,/')
 
-      
+  def sendToDisplay(self):
+    if self.mylcd != None:
+        self.lock.acquire()
+        self.mylcd.clear()
+        self.mylcd.write_string(self.displayLine1)
+        if self.displayLine2 != None:
+            self.mylcd.cursor_pos = (1, 0)
+            self.mylcd.write_string(self.displayLine2)
+        self.lock.release()
+
+  def resetLayerInformations(self):
+      self.currentLayerInformation = None
+
   def on_after_startup(self):
-    mylcd = self.mylcd
     self._logger.info("plugin initialized !")
 
-  
-  def on_print_progress(self,storage,path,progress):
-    mylcd = self.mylcd
-    percent = int(progress/6.25)+1
-    completed = '\x01'*percent
-    mylcd.clear()
-    mylcd.write_string('Completed: '+str(progress)+'%')
-    mylcd.cursor_pos = (1,0)
-    mylcd.write_string(completed)
+  def on_print_progress(self, storage, path, progress):
+    if progress == 100:
+      self.jobIsDone()
+      return
 
-    if progress==1 :
-      self.start_date=time.time()
-  
-    if progress>10 and progress<100:
-      now=time.time()
-      elapsed=now-self.start_date
-      average=elapsed/(progress-1)
-      remaining=int((100-progress)*average)
-      remaining=str(datetime.timedelta(seconds=remaining))
-      mylcd.cursor_pos = (1,3)
-      mylcd.write_string(remaining)
+    percent = int(progress / 6.25) + 1
+    completed = '\x01' * percent
+    self.displayLine1 = 'Completed: ' + str(progress) + '%'
 
-    if progress==100 :
-      self.JobIsDone(mylcd)
+    if progress == 1:
+      self.start_date = time.time()
 
+    remaining = None
+    if progress > 10 and progress < 100:
+      now = time.time()
+      elapsed = now - self.start_date
+      average = elapsed / (progress - 1)
+      remaining = int((100 - progress) * average)
+      remaining = str(datetime.timedelta(seconds=remaining))
 
+    line2 = None
+    if self._settings.get_boolean(["showLayerInformationIfAvailable"]) and self.currentLayerInformation != None:
+        line2 = self._merge_strings("                ", completed, "   _" + self.currentLayerInformation + "_")
+    else:
+      if remaining != None:
+        line2 = self._merge_strings("                ", completed, "   _" + remaining + "_")
+      else:
+        line2 = completed
+
+    self.displayLine2 = line2
+    self.sendToDisplay()
+
+  def _merge_strings(self, targetString, string1, string2):
+
+    def replace_str_index(text, index=0, replacement=''):
+      return '%s%s%s' % (text[:index], replacement, text[index + 1:])
+
+    for index in range(len(targetString)):
+        if (index < len(string1)):
+            targetString = replace_str_index(targetString, index, string1[index])
+        if (index < len(string2) and string2[index] != " "):
+            targetString = replace_str_index(targetString, index, string2[index])
+    # insert spaces
+    targetString = targetString.replace("_"," ")
+    return targetString
 
   def on_event(self,event,payload):
     mylcd = self.mylcd
-      
+
+    if event in "DisplayLayerProgress_layerChanged":
+      if self._settings.get_boolean(["showLayerInformationIfAvailable"]):
+        self.currentLayerInformation = str(payload["currentLayer"]) + "/" + str(payload["totalLayer"])
+
     if event in "Connected":
+      self.resetLayerInformations()
       mylcd.clear()
       mylcd.write_string('Connected to:')
       mylcd.cursor_pos = (1,0)
-      mylcd.write_string(payload["port"])
+      portName = payload["port"] if payload["port"] != None else ""
+      mylcd.write_string(portName)
 
     if event in "Shutdown":
       mylcd.clear()
@@ -100,44 +155,45 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
       time.sleep(1)
       mylcd._set_backlight_enabled(False)
       mylcd.close()
-    
-    
-    if event in "PrinterStateChanged":
-      
-      if payload["state_string"] in "Offline":
-        mylcd.clear()
-        mylcd.write_string('Octoprint is not connected')
-        time.sleep(2)
-        mylcd.clear()
-        mylcd.write_string('saving a polar bear, eco mode ON')
-        time.sleep(5)
-        mylcd._set_backlight_enabled(False)
-      
-      if payload["state_string"] in "Operational":
-        mylcd._set_backlight_enabled(True)
-        mylcd.clear()
-        mylcd.write_string('Printer is       Operational')
-      
-      if payload["state_string"] in "Cancelling":
-        mylcd.clear()
-        mylcd.write_string('Printer  is Cancelling job') 
-        time.sleep(0.2)
-      
-      if payload["state_string"] in "PrintCancelled":
-        mylcd.clear()
-        time.sleep(0.5)
-        mylcd.write_string(' Job has been Cancelled (0_0) ' ) 
-        time.sleep(2)
-      
-      if payload["state_string"] in "Paused":
-        mylcd.clear()
-        time.sleep(0.5)
-        mylcd.write_string('Printer is  Paused') 
 
-      if payload["state_string"] in "Resuming":
-        mylcd.clear()
-        mylcd.write_string('Printer is Resuming its job') 
-        time.sleep(0.2)
+    if event in "PrinterStateChanged":
+
+        if payload["state_string"] in "Offline":
+            self.resetLayerInformations()
+            mylcd.clear()
+            mylcd.write_string('Octoprint is not connected')
+            time.sleep(2)
+            mylcd.clear()
+            mylcd.write_string('saving a polar bear, eco mode ON')
+            time.sleep(5)
+            mylcd._set_backlight_enabled(False)
+
+        if payload["state_string"] in "Operational":
+            self.resetLayerInformations()
+            mylcd._set_backlight_enabled(True)
+            mylcd.clear()
+            mylcd.write_string('Printer is       Operational')
+
+        if payload["state_string"] in "Cancelling":
+            mylcd.clear()
+            mylcd.write_string('Printer  is Cancelling job')
+            time.sleep(0.2)
+
+        if payload["state_string"] in "PrintCancelled":
+            mylcd.clear()
+            time.sleep(0.5)
+            mylcd.write_string(' Job has been Cancelled (0_0) ')
+            time.sleep(2)
+
+        if payload["state_string"] in "Paused":
+            mylcd.clear()
+            time.sleep(0.5)
+            mylcd.write_string('Printer is  Paused')
+
+        if payload["state_string"] in "Resuming":
+            mylcd.clear()
+            mylcd.write_string('Printer is Resuming its job')
+            time.sleep(0.2)
 
   def get_update_information(self):
       return dict(
@@ -153,6 +209,25 @@ class LCD1602Plugin(octoprint.plugin.StartupPlugin,
               pip="https://github.com/n3bojs4/octoprint-LCD1602/archive/{target}.zip"
           )
       )
+
+  ##~~ SettingsPlugin mixin
+  def get_settings_defaults(self):
+    settings = dict(
+        installedVersion=self._plugin_version,
+        showLayerInformationIfAvailable=False
+    )
+    return settings
+
+# ~~ AssetPlugin mixin
+  def get_assets(self):
+    # Define your plugin's asset files to automatically include in the
+    # core UI here.
+    return dict(
+        js=["js/LCD1602.js"],
+        css=[],
+        less=[]
+    )
+
 
 __plugin_name__ = "LCD1602 I2c display"
 
